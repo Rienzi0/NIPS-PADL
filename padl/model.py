@@ -1,13 +1,12 @@
 """Historical direct-gated variant, different from PADL Algorithm 1.
 
-Only the unused-at-runtime SciPy Beta-fit import was made lazy in this copy.
-The training and coefficient objectives retain their historical semantics.
+Coefficients have shape [K, N]. Reconstruction uses elementwise gates;
+the historical regularizer sums column maxima rather than Algorithm 1 row maxima.
 """
 
 import torch
-import torch.nn.functional as F
 
-def _init_R_beta(K, n_samples, alpha=1, beta=3.7, device='cuda'): #beta is the best on 3.7
+def _init_R_beta(K, n_samples, alpha=1, beta=3.7, device='cuda'):
     """使用Beta分布初始化R到logit空间"""
     beta_dist = torch.distributions.Beta(alpha, beta)
     R_beta = beta_dist.sample((K, n_samples)).to(device)
@@ -18,9 +17,6 @@ def _clamp_R(R_raw):
     """Sigmoid 归一化到 [0,1]"""
     return torch.sigmoid(R_raw)
 
-# =========================
-# NEW: delta-gating core
-# =========================
 def apply_delta_gate(R, delta: float, tau: float = 20.0, hard: bool = False):
     """
     用 delta 作为 value-bar 来决定激活（替代 topk）。
@@ -110,14 +106,13 @@ def dictionary_size(R_raw):
     R = _clamp_R(R_raw)
     return torch.sum(torch.max(R, dim=0).values)
 
-# =========================
-# Your class: minimal edits
-# =========================
-class dic_learning():
+class DirectGatedDictionary:
     def __init__(self, d_size, K, num_iters, device, delta=None, tau=20.0,
                  target_sparsity: float = None, sparsity_weight: float = 0.0,
-                 beta: float = 3.7, beta_weight: float = 0.1,
-                 include_beta_reg: bool = True, predict_iters: int = 200):
+                 beta: float = 3.5, beta_weight: float = 0.1,
+                 include_beta_reg: bool = True, predict_iters: int = 100,
+                 r_steps: int = 20, d_steps: int = 10,
+                 lr_r: float = 5e-3, lr_d: float = 5e-4):
         """
         delta: 用 value-bar 控制激活（替代 sparsity=topk）
         tau:   soft gate 温度
@@ -141,8 +136,10 @@ class dic_learning():
         self.D = torch.rand(self.d_size, self.K, device=device)
         self.D.requires_grad_(True)
 
-        self.k_r = 20
-        self.k_d = 10
+        self.k_r = r_steps
+        self.k_d = d_steps
+        self.lr_r = lr_r
+        self.lr_d = lr_d
 
     def _apply_delta(self, R):
         """
@@ -164,7 +161,7 @@ class dic_learning():
         R = _init_R_beta(self.K, n_samples, beta=self.beta, device=self.device)
         R.requires_grad_(True)
 
-        optimizer_R = torch.optim.Adam([R], lr=5e-3)
+        optimizer_R = torch.optim.Adam([R], lr=self.lr_r)
 
         for _ in range(self.predict_iters):
             optimizer_R.zero_grad()
@@ -195,8 +192,8 @@ class dic_learning():
         R = _init_R_beta(self.K, n_samples, beta=self.beta, device=self.device)
         R.requires_grad_(True)
 
-        optimizer_R = torch.optim.Adam([R], lr=5e-3)
-        optimizer_D = torch.optim.Adam([self.D], lr=5e-4)
+        optimizer_R = torch.optim.Adam([R], lr=self.lr_r)
+        optimizer_D = torch.optim.Adam([self.D], lr=self.lr_d)
 
         for i in range(self.iters):
             # update R
@@ -227,12 +224,3 @@ class dic_learning():
                 self.D /= torch.norm(self.D, dim=0, keepdim=True) + 1e-8
 
         return self.D.detach()
-    def beta_varify(self,R):
-        from scipy import stats
-        R = torch.clamp(R, min=0.00001, max=0.9999)
-        data_numpy = R.cpu().numpy()
-        data_flat = data_numpy.flatten()
-        alpha_hat, beta_hat, loc, scale = stats.beta.fit(data_flat, floc=0, fscale=1)
-        
-        print(f"Estimated alpha (α) parameter: {alpha_hat:.4f}")
-        print(f"Estimated beta (β) parameter: {beta_hat:.4f}")

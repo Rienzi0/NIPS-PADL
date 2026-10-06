@@ -1,11 +1,10 @@
 # NIPS-PADL
 
-The default command runs the historical CIFAR-100 experiment confirmed on
-3 August 2026. The SVHN command extends the same model and random-patch protocol
-with the existing SVHN threshold delta=0.49. Both recipes have been run on real
-data with the pinned dependencies.
+Fixed-configuration CIFAR-100 and SVHN reconstruction experiments, trained from
+scratch. The two recipes preserve the previously verified direct-gated model,
+random-patch sampling and numerical environment.
 
-## Reproduce CIFAR-100 and SVHN
+## Run
 
 Use Python 3.12 and the pinned dependencies:
 
@@ -15,56 +14,76 @@ cd NIPS-PADL
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install --only-binary=:all: -r requirements.txt
-python reproduce.py --download --device mps --output outputs/cifar-historical-seed57
-python reproduce.py --dataset svhn --download --device mps --output outputs/svhn-legacy-seed57
+python reproduce.py --download --device mps --output outputs/cifar100-seed57
+python reproduce.py --dataset svhn --download --device mps --output outputs/svhn-seed57
 ```
 
-The verified executions use Apple MPS. `--device auto` is the CLI default;
-CPU and CUDA are explicit alternatives whose results are recorded and compared
-to the references. Downloads require `--download`. For existing files, omit
-that flag and use `--data-dir /path/to/datasets`. SVHN needs only the official
-`train_32x32.mat` file for this legacy-protocol recipe; torchvision checks its
-original checksum.
+The recorded results use Apple MPS, PyTorch 2.13.0 and torchmetrics 1.9.0.
+`--device auto` selects CUDA, then MPS, then CPU. CPU/CUDA executions save their
+actual results and compare them to the MPS reference; matching performance on
+those devices has not been established. Changing library versions can change
+optimization and SSIM results.
 
-| Fixed seed-57 experiment | Pixel RMSE | Patch-mosaic PSNR | Patch-mosaic SSIM | Mean retained coefficients per patch |
+To use existing datasets, omit `--download` and add `--data-dir /path/to/data`.
+Downloads are opt-in. SVHN uses `train_32x32.mat`; torchvision verifies the
+official checksum. Every run requires a new output directory.
+
+## Recorded results
+
+| Dataset | Pixel RMSE | Mosaic PSNR | Mosaic SSIM | Mean coefficients per patch |
 | --- | ---: | ---: | ---: | ---: |
-| CIFAR-100 historical recipe | 0.099168 | 20.188501 | 0.603126 | 13.475 |
-| SVHN extension | 0.086381 | 21.078730 | 0.618446 | 10.450 |
+| CIFAR-100 | 0.099168 | 20.188501 | 0.603126 | 13.475 |
+| SVHN | 0.086381 | 21.078730 | 0.618446 | 10.450 |
 
-The coefficient counts are per-patch means. Both audited cases have 128 global
-active rows; these results do not demonstrate the separate 19-atom cost claim.
+Each row is one seed-57 training run. Both have 128 globally active rows;
+per-patch coefficient counts do not establish the separate 19-atom cost claim.
 
-Both recipes fix seed 57, K=128, Beta(1,3.5) initialization, 400 training
-iterations with 20 R / 10 D updates, and 100 prediction steps. Delta is 0.44
-for CIFAR and 0.49 for SVHN. Each samples 200 images from the dataset's training
-partition and crops ten grayscale 8x8 patches per image, using the first
-1,800 patches for training and the final 200 for evaluation. SSIM uses the
-historical 64x64 patch mosaic. Exact conditions and data fingerprints are in
-`profiles/historical_cifar.json` and `profiles/historical_svhn.json`.
+The complete defaults and reference fingerprints are in
+[configs/cifar100.json](configs/cifar100.json) and
+[configs/svhn.json](configs/svhn.json). These files directly configure the shared
+runner: K=128, Beta(1,3.5) initialization, 400 training iterations, 20 coefficient
+and 10 dictionary updates per iteration, and 100 prediction steps. Delta is
+0.44 for CIFAR-100 and 0.49 for SVHN.
 
-These are single-configuration legacy-protocol experiments. The paper's
-Table 2 reports ten-run summaries under a different stated data protocol;
-these recipes do not reconstruct those original ten runs. See
-[PAPER_REPRODUCTION_STATUS.md](PAPER_REPRODUCTION_STATUS.md) for the measured
-results and their relationship to the manuscript.
+## Protocol and scope
 
-## Outputs and checks
+Each recipe samples 200 shuffled images from the dataset's **training partition**
+and ten random grayscale 8×8 crops per image. The first 1,800 patches train the
+dictionary; the final 200 evaluate it. Crop coordinates preserve the historical
+exclusive upper bound `image_size - patch_size`. The RNG is seeded once, before
+sampling, and continues through training and evaluation.
 
-Each invocation trains from scratch and saves `metrics.csv`,
-`matched_evaluation.npz` and `manifest.json`. The manifest records the data and
-dictionary fingerprints, configuration, runtime versions, source hashes and
-metric differences. Existing output directories are rejected. A data or metric
-mismatch returns a nonzero exit code and preserves the actual measurements.
+RMSE uses all 200 evaluation patches in the original pixel scale. PSNR and SSIM
+arrange consecutive crops into three 64×64 mosaics, omit the final eight patches,
+and use the joint ground-truth/reconstruction intensity range. These are mosaic
+metrics; the random crops do not reconstruct complete source images.
+
+The released model uses sigmoid coefficients, soft elementwise gates during
+training, hard gates during evaluation, and column-max regularization. This is
+the historical direct-gated variant, which differs from the paper's Algorithm 1.
+The recipes reproduce the recorded cases above. They do not reproduce Table 2's
+ten-run summaries under its stated official-split, non-overlapping-patch protocol.
+
+## Files and verification
+
+```text
+reproduce.py           CLI, reference checks and result saving
+padl/model.py          direct-gated dictionary learning
+padl/data.py           dataset loading and random patches
+padl/experiment.py     shared training and metric evaluation
+configs/               the two fixed recipes
+tests/                 numerical and output-integrity checks
+```
+
+Each run saves `metrics.csv`, `matched_evaluation.npz` and `manifest.json`,
+including matched dictionary/coefficients/data, runtime versions, source hashes,
+fingerprints and metric differences. Data or metric mismatches return a nonzero
+exit code and retain the measurements. Absolute comparison tolerances are
+0.0005 RMSE, 0.05 PSNR and 0.005 mosaic SSIM; data fingerprints must match exactly.
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-[VALIDATION.md](VALIDATION.md) records real-data and packaging checks.
-[REPRODUCIBILITY.md](REPRODUCIBILITY.md) describes the metric and model
-semantics, Algorithm 1 reference, and reduced supplemental presets.
-The earlier CIFAR 0.1054 / SVHN 0.0730 presets remain available through
-`reproduce_supplemental.py` and are separate from these recipes.
-
-Code is released under the [MIT License](LICENSE).
-Dataset images are downloaded separately and are not bundled.
+Code is released under the [MIT License](LICENSE). Dataset images are downloaded
+separately and are not bundled.

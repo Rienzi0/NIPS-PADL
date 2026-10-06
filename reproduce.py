@@ -13,12 +13,21 @@ import time
 import numpy as np
 import torch
 
-from historical_cifar import run_historical_cifar_experiment
-from historical_svhn import run_historical_svhn_experiment
-from rebuttal_tools.run_metrics_io import tensor_fingerprint
+from padl.experiment import run_experiment
 
 
 ROOT = Path(__file__).resolve().parent
+
+
+def tensor_fingerprint(value):
+    if isinstance(value, torch.Tensor):
+        value = value.detach().cpu().numpy()
+    array = np.ascontiguousarray(np.asarray(value))
+    digest = hashlib.sha256()
+    digest.update(str(array.shape).encode("utf-8"))
+    digest.update(str(array.dtype).encode("utf-8"))
+    digest.update(array.tobytes(order="C"))
+    return digest.hexdigest()
 
 
 def build_argparser():
@@ -55,26 +64,22 @@ def run(output, data_dir, device="auto", download=False, dataset="cifar100"):
     if dataset not in ("cifar100", "svhn"):
         raise ValueError("Dataset must be cifar100 or svhn")
     device = resolve_device(device)
-    profile_name = "historical_cifar.json" if dataset == "cifar100" else "historical_svhn.json"
-    profile = json.loads((ROOT / "profiles" / profile_name).read_text())
-    experiment = run_historical_cifar_experiment if dataset == "cifar100" else run_historical_svhn_experiment
-    print("{} legacy-protocol experiment: seed 57, 1800/200 random patches, beta 3.5, delta {}, "
-          "400 outer iterations, 100 prediction steps, device {}".format(dataset, profile["threshold"], device), flush=True)
+    profile = json.loads((ROOT / "configs" / (dataset + ".json")).read_text())
+    print("{}: seed {}, {}/{} random patches, beta {}, delta {}, device {}".format(
+        dataset, profile["seed"], profile["train_patches"], profile["test_patches"],
+        profile["beta_initialization"], profile["threshold"], device), flush=True)
     started = time.perf_counter()
-    metrics, arrays = experiment(
-        seed=57, device=device, data_dir=str(data_dir), download=download,
-        return_artifacts=True,
-    )
+    metrics, arrays = run_experiment(profile, device, str(data_dir), download)
     elapsed = time.perf_counter() - started
-    fingerprint = tensor_fingerprint(torch.from_numpy(np.concatenate(
-        [arrays["X_train_raw"], arrays["X_test_raw"]], axis=1)))
+    fingerprint = tensor_fingerprint(np.concatenate(
+        [arrays["X_train_raw"], arrays["X_test_raw"]], axis=1))
     row = {
         "dataset": dataset, "method": "historical_direct_gate",
         "split_id": profile["split_id"], "data_fingerprint": fingerprint,
-        "dictionary_fingerprint": tensor_fingerprint(torch.from_numpy(arrays["D"])),
+        "dictionary_fingerprint": tensor_fingerprint(arrays["D"]),
         **metrics, "device": device, "elapsed_seconds": elapsed,
     }
-    reference = profile.get("reference_metrics", profile.get("historical_measured_metrics"))
+    reference = profile.get("reference_metrics")
     errors = {key: abs(metrics[key] - value) for key, value in reference.items()} if reference else None
     matches = all(errors[key] <= profile["comparison_tolerances"][key] for key in errors) if reference else None
     expected_fingerprint = profile.get("data_fingerprint")
@@ -83,9 +88,9 @@ def run(output, data_dir, device="auto", download=False, dataset="cifar100"):
         matches = False
     versions = {name: importlib.metadata.version(name)
                 for name in ("torch", "torchvision", "numpy", "scipy", "Pillow", "torchmetrics")}
+    source_paths = sorted(list(ROOT.glob("*.py")) + list((ROOT / "padl").glob("*.py")))
     sources = {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
-               for path in sorted(ROOT.rglob("*.py"))
-               if ".venv" not in path.parts and "outputs" not in path.parts}
+               for path in source_paths}
     manifest = {
         "profile": profile, "run": row,
         "reference_metric_errors": errors, "matches_reference": matches,
@@ -95,8 +100,6 @@ def run(output, data_dir, device="auto", download=False, dataset="cifar100"):
                     "device": device, "threads": torch.get_num_threads(), "packages": versions},
         "source_sha256": sources,
     }
-    if dataset == "cifar100":
-        manifest.update(historical_reference_errors=errors, matches_historical_reference=matches)
     output.mkdir(parents=True, exist_ok=False)
     with (output / "metrics.csv").open("x", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(row))

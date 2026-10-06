@@ -1,0 +1,35 @@
+{
+  "dataset": "cifar100",
+  "seed": 57,
+  "sampled_images": 200,
+  "patch_size": 8,
+  "patches_per_image": 10,
+  "train_patches": 1800,
+  "test_patches": 200,
+  "dict_size": 128,
+  "fit_iters": 400,
+  "r_steps": 20,
+  "d_steps": 10,
+  "lr_r": 0.005,
+  "lr_d": 0.0005,
+  "beta_initialization": 3.5,
+  "beta_weight": 0.1,
+  "include_beta_reg": true,
+  "predict_steps": 100,
+  "threshold": 0.44,
+  "tau": 20.0,
+  "ssim_mosaic_size": 64,
+  "split_id": "legacy_random_images200_patches10_train1800_eval200_seed57",
+  "data_fingerprint": "90b32e03e00137c2ec663c8d85712e4c9f048b17fe365b2a6ff2ccdabd781853",
+  "comparison_tolerances": {
+    "proxy_ssim": 0.005,
+    "psnr": 0.05,
+    "rmse": 0.0005
+  },
+  "reference_device": "mps",
+  "reference_metrics": {
+    "proxy_ssim": 0.6031256318092346,
+    "psnr": 20.188501358032227,
+    "rmse": 0.09916787594556808
+  }
+}

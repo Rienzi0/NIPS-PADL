@@ -1,2 +1,0 @@
-# Dependencies used to validate the standalone release and working repository.
--r requirements.txt
