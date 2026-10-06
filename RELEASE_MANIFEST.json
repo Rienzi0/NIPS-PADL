@@ -1,0 +1,79 @@
+{
+  "available_datasets": [
+    "cifar100",
+    "svhn"
+  ],
+  "dataset_profiles": {
+    "cifar100": "profiles/historical_cifar.json",
+    "svhn": "profiles/historical_svhn.json"
+  },
+  "default_entry_point": "reproduce.py",
+  "default_profile": "profiles/historical_cifar.json",
+  "files": {
+    ".gitignore": "14a1c247bd1b0442e447d689b9613da8c0268340fc2893325755859a1e3bfe21",
+    "LICENSE": "f68100b11c5b83d5e671a199d36efed50794717ff6736e8ebd295857989392b3",
+    "PAPER_REPRODUCTION_STATUS.md": "42a8523861aa2a31adae48ef3a59f85af5fe4f8291b2f8571fbc488fdbaaa2b3",
+    "README.md": "75192bd233db199096109291fb878df8054bf9220f2a88c2c797f7fb3b7e7243",
+    "REPRODUCIBILITY.md": "79ef0f1ea91613a7c4147ead1b6326fe289261861951fbd54770bb3a61368c20",
+    "SOURCE_MANIFEST.json": "1248b8953519b07b86dc75f6ab0a9919460592071e257ca8a6331a3ef8c7236d",
+    "VALIDATION.md": "c652aa1752bef94359544478a09fbc459b6ee66c119dea953fcf0c6ee86e5cdb",
+    "checkpoints/cifar100_dictionary_seed57_beta35.npz": "7e86720d9be954dd362f0bfcb8748564a85aded0c8bcfe6b612d3f4eabe667d0",
+    "checkpoints/svhn_dictionary_seed57_beta35.npz": "2365e94ce82912da3c4e64b4d62b4eca67b3034830d323d97d9a7b6fc1c6533d",
+    "historical_cifar.py": "c6ec97bf8cddfe5d9c60423f84b3eb08fed8bd9dd4ddd6a64d975f7cc0cbd7d4",
+    "historical_svhn.py": "845baed789d6cba4fd04eb12603f2c8dee2fd8aa69e954ea9cf4577df90d3ed2",
+    "legacy_direct_gate.py": "b4b928b665f2a60a09c9036d0c18cb0671fe4e8d4a29fe9ffa2147b80f8025b7",
+    "load_custom_dataset.py": "352a2898de758524e4a07f66cae55dc3127b62246c67d4ad5fa69f8e38be8a32",
+    "padl_algorithm1_reference.py": "e604205aef5e86b7991ff4132e880c831c4fe8d45ec6ad6faedbceef0b6e7b76",
+    "paper_patch_data.py": "04464bcc07a2c27bf036f32d47c2a84fd270e9af5314ac726a73e297772a3a3f",
+    "profiles/cifar100.json": "ee8d372b8df5a3e022e0c3ed90fc68ae9427892de612c9343bd0731e9232c021",
+    "profiles/historical_cifar.json": "e3de2e216509597bfd65458ffcda69b51d0ffe374f00dd3040bfc90fea64683d",
+    "profiles/historical_svhn.json": "2bf13bc131c4c7de22bcd1699f6c58c26f3ebf0a96962ba7d1743ec513b722cd",
+    "profiles/svhn.json": "be8a7f048f76f5e34a3db8a650ff4205680820b86510d09fdc5ec543f0416707",
+    "rebuttal_tools/__init__.py": "b77ff14a5b281ba3fb930be6e2161afceda4e70686822c501f06563424e0ad67",
+    "rebuttal_tools/artifact_io.py": "0c987c331da809fc2444c3a8578daad52d62202a134d58a73935bc95c1c870c2",
+    "rebuttal_tools/paired_run_statistics.py": "5e29751c79fbb4ce7350e8e6562423c58df200540e51bdbf0fb46fe604f029ac",
+    "rebuttal_tools/run_metrics_io.py": "360923c117c2b415dec98078d66972a95b2a31fab1e40e29a9ee0f1e0fb0192a",
+    "rebuttal_tools/theory_assumption_diagnostics.py": "4d11e29faa91e432f426964953f242036c37525d6a0e0be4322fee30ef842ca9",
+    "reproduce.py": "c913505c001fa927da38f72f603ba63db7ced094a8664dd12b557354f00891bb",
+    "reproduce_supplemental.py": "e3f75f5be6d5404c238304e48b23634e607edf6ef6cc7806535fb7c71f51e223",
+    "requirements-supplemental.txt": "66884c3560267d37c1d0acd6123b1ff1ef0e830bb219dc6e87b6c9e128426eba",
+    "requirements-validation.txt": "74ab9956e466e23fbb95d54572fbbe404c098cc9a5efe483b74b6bdaa8857368",
+    "requirements.txt": "bf6a253260fc16eebffea8c20c7eeb385160596b4121e17d9261cc600fe259ce",
+    "tests/test_historical_release.py": "310ad15f4479f3ec1cc4fcf21aa891e846839c176bfde31811f67577792c1795",
+    "tests/test_padl_algorithm1_reference.py": "0a0812c2533b613f339708fe2681a72cf320d943b02a18ad5ef6c4e08326d1e0",
+    "tests/test_pairing_integrity.py": "8ef8fe3fef3692b3e9bfd8dc509993cb8bb84911b49af08bbcde191c5d9afc32",
+    "tests/test_paper_patch_data.py": "7319a62eeb977f1baf48d742a6e8ae3dc9470f9713037b38c533585b28b50b57",
+    "tests/test_rebuttal_tools.py": "5becc139c68278e83a5e13aa73cc398ade1304116cd7dfb581e2811b094c58d8",
+    "tests/test_reproduce.py": "d8c0a6a43e7e4f178afb0e698563efd67af3e544cc4a2c33e5074e1365d58ede",
+    "validation/algorithm1_diagnostic_smoke.json": "a84d04364057bddb5c64ae4568daa12dba2c7eb6331ff134ac23594973e07a6d",
+    "validation/environment.json": "f1c1d481674afbd40ac99c448c1dbec3baa46356c17f89930dd3a0c4ebf91a86",
+    "validation/historical_cifar_metrics.csv": "ad0c96376246969d90cd7ee7d9ba579931ccde8992956318e94d224719a9c0d2",
+    "validation/historical_cifar_run.json": "6a2e06de246c0a4fda9709ec2116d465f1f648aa4c400e86a61d5382e4ee3817",
+    "validation/initialization_audit.csv": "e89bb6ed62fca82f3bb22a59ee228b9b5d96d7503019887de22ab2cfe38c125a",
+    "validation/svhn_initial_measurement.json": "9ccecdeefaf7580cd9e189ad44ab734f29f4df89acbe7bf24091bd5c1739b225",
+    "validation/svhn_legacy_metrics.csv": "8cc95ca957de0d7ff2bd4c8d07dd93155fe7631d57fe0979dad1047a9ebdb8e9",
+    "validation/svhn_legacy_run.json": "d3e2bf7624aed33402e3459825093aa9679af715c07d2e09dbcb12dd4a6296ca",
+    "validation/verified_runs.csv": "34a7f232663f2fd75bb1177403bbf9d06c2e3add6b5d8b55bf3fc540cc069a72"
+  },
+  "format_version": 1,
+  "license": {
+    "file": "LICENSE",
+    "spdx_id": "MIT"
+  },
+  "license_status": "MIT",
+  "paper_reported_rmse": {
+    "cifar100": {
+      "mean": 0.099,
+      "repeated_runs": 10,
+      "sd": 0.009
+    },
+    "svhn": {
+      "mean": 0.09,
+      "repeated_runs": 10,
+      "sd": 0.006
+    }
+  },
+  "release_status": "verified_cifar_svhn_recipes",
+  "repository_url": "https://github.com/Rienzi0/NIPS-PADL",
+  "scope": "verified historical CIFAR single-run recipe and fixed-configuration SVHN extension; reduced official-split supplemental audits; full Table 2 repeated runs not reproduced"
+}

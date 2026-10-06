@@ -1,0 +1,102 @@
+{
+  "historical_cifar.py": {
+    "changes": [
+      "extracted historical runner and metric helpers; removed unrelated imports and process-global CUDA/SSL settings",
+      "added explicit download control and optional matched-artifact return; training and metric arithmetic unchanged"
+    ],
+    "release_sha256": "c6ec97bf8cddfe5d9c60423f84b3eb08fed8bd9dd4ddd6a64d975f7cc0cbd7d4",
+    "source": "general_exp.py",
+    "source_sha256": "54dfc527386ce8231cd3d466a8b5b72feb14dad43e6b29cbb853d941475d920c"
+  },
+  "historical_svhn.py": {
+    "changes": [
+      "adapted the historical CIFAR runner to SVHN with the existing delta=0.49",
+      "reused historical_cifar.py metric and seed helpers; numerical model, split sizes and iteration counts unchanged"
+    ],
+    "release_sha256": "845baed789d6cba4fd04eb12603f2c8dee2fd8aa69e954ea9cf4577df90d3ed2",
+    "source": "general_exp.py",
+    "source_sha256": "54dfc527386ce8231cd3d466a8b5b72feb14dad43e6b29cbb853d941475d920c"
+  },
+  "legacy_direct_gate.py": {
+    "changes": [
+      "renamed and added a model-variant docstring",
+      "moved scipy.stats import into beta_varify; numerical objectives unchanged"
+    ],
+    "release_sha256": "b4b928b665f2a60a09c9036d0c18cb0671fe4e8d4a29fe9ffa2147b80f8025b7",
+    "source": "L_inf_dic_offload_gate.py",
+    "source_sha256": "4e9f2f372b4dd36a97f410ee9925d842d8a463c00bc24be98a3d5929ebe6493c"
+  },
+  "load_custom_dataset.py": {
+    "changes": [
+      "changed default path to local data directory and default device to CPU",
+      "dataset downloads require explicit opt-in; shuffle and random crop arithmetic unchanged"
+    ],
+    "release_sha256": "352a2898de758524e4a07f66cae55dc3127b62246c67d4ad5fa69f8e38be8a32",
+    "source": "load_custom_dataset.py",
+    "source_sha256": "acf15e7b7f82acb02429a89d32619136ef692f9bf558c949d86f7d6edc10ad02"
+  },
+  "padl_algorithm1_reference.py": {
+    "changes": [],
+    "release_sha256": "e604205aef5e86b7991ff4132e880c831c4fe8d45ec6ad6faedbceef0b6e7b76",
+    "source": "padl_algorithm1_reference.py",
+    "source_sha256": "e604205aef5e86b7991ff4132e880c831c4fe8d45ec6ad6faedbceef0b6e7b76"
+  },
+  "paper_patch_data.py": {
+    "changes": [],
+    "release_sha256": "04464bcc07a2c27bf036f32d47c2a84fd270e9af5314ac726a73e297772a3a3f",
+    "source": "paper_patch_data.py",
+    "source_sha256": "04464bcc07a2c27bf036f32d47c2a84fd270e9af5314ac726a73e297772a3a3f"
+  },
+  "rebuttal_tools/__init__.py": {
+    "changes": [],
+    "release_sha256": "b77ff14a5b281ba3fb930be6e2161afceda4e70686822c501f06563424e0ad67",
+    "source": "rebuttal_tools/__init__.py",
+    "source_sha256": "b77ff14a5b281ba3fb930be6e2161afceda4e70686822c501f06563424e0ad67"
+  },
+  "rebuttal_tools/artifact_io.py": {
+    "changes": [],
+    "release_sha256": "0c987c331da809fc2444c3a8578daad52d62202a134d58a73935bc95c1c870c2",
+    "source": "rebuttal_tools/artifact_io.py",
+    "source_sha256": "0c987c331da809fc2444c3a8578daad52d62202a134d58a73935bc95c1c870c2"
+  },
+  "rebuttal_tools/paired_run_statistics.py": {
+    "changes": [
+      "require nonempty identical data fingerprints from both methods before paired analysis"
+    ],
+    "release_sha256": "5e29751c79fbb4ce7350e8e6562423c58df200540e51bdbf0fb46fe604f029ac",
+    "source": "rebuttal_tools/paired_run_statistics.py",
+    "source_sha256": "5cfa9cc247d0550e60b5eee78d29d76b7b6766ae9f8da698ea9682911295dc91"
+  },
+  "rebuttal_tools/run_metrics_io.py": {
+    "changes": [],
+    "release_sha256": "360923c117c2b415dec98078d66972a95b2a31fab1e40e29a9ee0f1e0fb0192a",
+    "source": "rebuttal_tools/run_metrics_io.py",
+    "source_sha256": "360923c117c2b415dec98078d66972a95b2a31fab1e40e29a9ee0f1e0fb0192a"
+  },
+  "rebuttal_tools/theory_assumption_diagnostics.py": {
+    "changes": [],
+    "release_sha256": "4d11e29faa91e432f426964953f242036c37525d6a0e0be4322fee30ef842ca9",
+    "source": "rebuttal_tools/theory_assumption_diagnostics.py",
+    "source_sha256": "4d11e29faa91e432f426964953f242036c37525d6a0e0be4322fee30ef842ca9"
+  },
+  "tests/test_padl_algorithm1_reference.py": {
+    "changes": [],
+    "release_sha256": "0a0812c2533b613f339708fe2681a72cf320d943b02a18ad5ef6c4e08326d1e0",
+    "source": "rebuttal_tools/tests/test_padl_algorithm1_reference.py",
+    "source_sha256": "0a0812c2533b613f339708fe2681a72cf320d943b02a18ad5ef6c4e08326d1e0"
+  },
+  "tests/test_paper_patch_data.py": {
+    "changes": [],
+    "release_sha256": "7319a62eeb977f1baf48d742a6e8ae3dc9470f9713037b38c533585b28b50b57",
+    "source": "rebuttal_tools/tests/test_paper_patch_data.py",
+    "source_sha256": "7319a62eeb977f1baf48d742a6e8ae3dc9470f9713037b38c533585b28b50b57"
+  },
+  "tests/test_rebuttal_tools.py": {
+    "changes": [
+      "adjusted diagnostics import path to the release layout"
+    ],
+    "release_sha256": "5becc139c68278e83a5e13aa73cc398ade1304116cd7dfb581e2811b094c58d8",
+    "source": "rebuttal_tools/tests/test_rebuttal_tools.py",
+    "source_sha256": "13068b8d4f1c66b55a6a1d0905073e281a66da5780877d37ca817e2ad5aaf5c4"
+  }
+}

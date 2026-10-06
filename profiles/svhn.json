@@ -1,0 +1,78 @@
+{
+  "beta_initialization": 3.5,
+  "beta_weight": 0.1,
+  "canonical_algorithm1": false,
+  "checkpoint": "checkpoints/svhn_dictionary_seed57_beta35.npz",
+  "checkpoint_sha256": "2365e94ce82912da3c4e64b4d62b4eca67b3034830d323d97d9a7b6fc1c6533d",
+  "coefficient_seeds": [
+    13,
+    34,
+    57,
+    73,
+    97
+  ],
+  "comparison_tolerances": {
+    "global_active_atoms": 3,
+    "mean_retained_per_patch": 0.2,
+    "rmse": 0.0001
+  },
+  "d_steps": 10,
+  "data_fingerprint": "b7b05c0876a8d410a4789380e468c19ab5af777fc701eff8c78aca865c5fc632",
+  "data_protocol": "paper_nonoverlap_v1",
+  "data_seed": 57,
+  "dataset": "svhn",
+  "default_coefficient_seed": 57,
+  "dict_size": 128,
+  "dictionary_fingerprint": "cd4c5a22ac9e91717d5514c81e3ec91f037d52a3e970e7613edb47f2ff0b5600",
+  "dictionary_seed": 57,
+  "fit_iters": 400,
+  "include_beta_reg": true,
+  "lambda_column_max_legacy": 1.01,
+  "lambda_l1_legacy": 1.33,
+  "lr_d": 0.0005,
+  "lr_r": 0.005,
+  "model_variant": "historical_direct_gated_variant",
+  "normalization": "per-patch mean and sample std (correction=1) plus 1e-8",
+  "patch_size": 8,
+  "predict_steps": 1100,
+  "profile_id": "svhn_direct_gate_v1",
+  "profile_version": 1,
+  "r_steps": 20,
+  "reference_metrics": {
+    "13": {
+      "global_active_atoms": 91,
+      "mean_retained_per_patch": 14.744000434875488,
+      "rmse": 0.07300128787755966
+    },
+    "34": {
+      "global_active_atoms": 91,
+      "mean_retained_per_patch": 14.784000396728516,
+      "rmse": 0.0729982778429985
+    },
+    "57": {
+      "global_active_atoms": 90,
+      "mean_retained_per_patch": 14.784000396728516,
+      "rmse": 0.0729966089129448
+    },
+    "73": {
+      "global_active_atoms": 92,
+      "mean_retained_per_patch": 14.777999877929688,
+      "rmse": 0.07299463450908661
+    },
+    "97": {
+      "global_active_atoms": 91,
+      "mean_retained_per_patch": 14.814000129699707,
+      "rmse": 0.07301430404186249
+    }
+  },
+  "scope": "reduced official-split checkpoint reconstruction, not a main-paper table reproduction",
+  "split_id": "paper_nonoverlap_v1_direct_gate_reduced",
+  "tau": 20.0,
+  "test_patches": 500,
+  "threshold": 0.49,
+  "threshold_selection": "historical experimental configuration, frozen for this release; not a fresh validation experiment",
+  "tolerance_meaning": "numerical comparison thresholds, not confidence intervals or additional performance claims",
+  "train_patches": 2000,
+  "training_beta_initialization": 3.5,
+  "training_configuration_recovery": "Beta(1,3.5) gives a dictionary within 7e-5 maximum absolute error of the historical checkpoint in the tested PyTorch 2.5.1 CPU environment; the source artifact beta field did not separate fit and predict initialization."
+}
